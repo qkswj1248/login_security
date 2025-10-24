@@ -4,10 +4,7 @@ import com.banban.login_security.code.Code;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 
 /*
 응답할 JSON 형태
@@ -20,7 +17,7 @@ import org.springframework.web.ErrorResponse;
     }
 }
  */
-@Setter @Getter
+@Getter
 @Builder
 public class Response{
     private final int code;

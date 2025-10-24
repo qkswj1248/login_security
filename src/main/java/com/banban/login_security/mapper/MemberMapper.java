@@ -2,6 +2,7 @@ package com.banban.login_security.mapper;
 
 import com.banban.login_security.domain.Member;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +13,6 @@ import java.util.Optional;
 @Mapper
 public interface MemberMapper {
     List<Member> findAll();
-    Optional<Member> findById(String id);
+    Optional<Member> findById(@Param("id") String id);
     void insert(Member member);
 }

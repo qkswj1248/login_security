@@ -19,6 +19,7 @@ public class GlobalException extends ResponseEntityExceptionHandler {
 
     // 언체크 예외를 잡아서 처리
     // illegal 은 적절하지 못한 인자를 메소드에 넘겨주었을 때 발생한다.
-    // @Valid에 의한 유효성 검증에 실패했을 때 발생함(??)
+    // @Valid에 의한 유효성 검증에 실패했을 때 발생함(??) 이거 @Param 붙여야한다던데
+
 
 }
