@@ -5,6 +5,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -19,15 +22,25 @@ import java.io.IOException;
  */
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    public final JwtTokenProvider jwtTokenProvider;
+    private static final String ACCESS_TOKEN = "Authorization";
+    private static final String REFRESH_TOKEN = "RefreshToken";
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try{
             // Request Header 에서 토큰 추출하기(없으면 null 반환)
+            String accessToken = jwtTokenProvider.resolveAccessToken(request);
+            String path = request.getRequestURI();
 
             // null 인지 확인하고 validateToken 으로 토큰 유효성 검사
-
-            // 인증이 된다면 ContextHolder 에 담아두기
-            // 여기서 안담겨진(인증이 안된) 것들은 다음 필터에서 확인하고 error 를 던져줌
+            if(StringUtils.hasText(accessToken) && jwtTokenProvider.validateToken(accessToken)){
+                Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+                // 인증이 된다면 ContextHolder 에 담아두기
+                // 이렇게 만든 인증토큰 담아두면 다음 필터들이 인증된걸 알고 넘어가줌
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }catch (Exception e){
             logger.warn("JWT 처리 중 예외 발생 : {}", e);
         }

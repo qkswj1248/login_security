@@ -19,4 +19,5 @@ public enum CommonErrorCode implements Code{
     private final int code;
     private final String message;
     private final HttpStatus httpStatus;
+
 }

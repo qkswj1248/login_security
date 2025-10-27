@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 @Getter
 @Builder
 public class Response{
+    private final String name;
     private final int code;
     private final String message;
     // null 값이나 length 가 0인 값들을 제외시키도록 조정할 수 있는 어노테이션
@@ -30,6 +31,7 @@ public class Response{
         return ResponseEntity
                 .status(code.getCode())
                 .body(Response.builder()
+                        .name(code.name())
                         .code(code.getCode())
                         .message(code.getMessage())
                         .detail(object)
