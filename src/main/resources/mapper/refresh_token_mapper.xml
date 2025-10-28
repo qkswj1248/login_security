@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.banban.login_security.mapper.RefreshTokenMapper">
+    <select id="findRefreshToken" resultType="String">
+        select token from REFRESH_TOKEN
+    </select>
+
+    <select id="delete" parameterType="String">
+        delete token from REFRESH_TOKEN where token = #{refreshToken}
+    </select>
+
+    <select id="insert" parameterType="String">
+        insert into REFRESH_TOKEN (token) VALUES (#{refreshToken})
+    </select>
+
+</mapper>

@@ -13,6 +13,7 @@ public enum SecurityErrorCode implements Code{
     UNKNOWN_ERROR(404, "알 수 없는 에러"),
     SECURITY_USER_NOT_FOUND(1101, "유저를 찾을 수 없습니다."),
     SECURITY_PASSWORD_IS_WRONG(1102, "패스워드가 틀립니다."),
+    SECURITY_AUTH_WRONG(1103, "아이디나 비밀번호가 틀립니다."),
     ACCESS_DENIED(404, "접근 금지"),
 
     CUSTOM_WRONG_TYPE_TOKEN(404, "잘못된 타입의 토큰"),

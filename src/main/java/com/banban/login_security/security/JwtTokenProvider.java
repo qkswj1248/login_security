@@ -67,6 +67,13 @@ public class JwtTokenProvider {
         return TokenInfo.of(accessToken, refreshToken, "Bearer");
     }
 
+    // refresh token 이랑 access token 분리해서 따로 만들기
+
+    // 이유 : refresh token 만 받았을 때는 access token 만 새로 밠급해야하니까
+    public String createRefreshToken(Authentication authentication){
+        return "";
+    }
+
     public String createJwtToken(Authentication authentication, String auths, Date date){
         return Jwts.builder()
                 .setSubject(authentication.getName())

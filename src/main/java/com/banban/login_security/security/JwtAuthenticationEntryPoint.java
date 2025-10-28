@@ -1,11 +1,13 @@
 package com.banban.login_security.security;
 
 import com.banban.login_security.code.Code;
+import com.banban.login_security.code.SecurityErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
@@ -21,7 +23,11 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         UserDetails가 UserNotFoundException을 던지면 throw하는 Exception이다!
         */
         if(authException instanceof BadCredentialsException){
-
+            setResponse(response, SecurityErrorCode.SECURITY_PASSWORD_IS_WRONG);
+        }else if(authException instanceof InsufficientAuthenticationException){
+            setResponse(response, SecurityErrorCode.CUSTOM_EXPIRED_TOKEN);
+        }else{
+            setResponse(response, SecurityErrorCode.UNKNOWN_ERROR);
         }
     }
 

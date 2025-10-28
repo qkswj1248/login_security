@@ -5,6 +5,7 @@ import com.banban.login_security.code.UserErrorCode;
 import com.banban.login_security.domain.Member;
 import com.banban.login_security.error.CustomException;
 import com.banban.login_security.mapper.MemberMapper;
+import com.banban.login_security.mapper.RefreshTokenMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService{
 
     private final MemberMapper memberMapper;
+    private final RefreshTokenMapper refreshTokenMapper;
 
     @Override
     public Optional<Member> findMember(String id) {
