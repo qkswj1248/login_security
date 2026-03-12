@@ -3,11 +3,12 @@ package com.banban.login_security.service;
 import com.banban.login_security.code.CommonErrorCode;
 import com.banban.login_security.code.SecurityErrorCode;
 import com.banban.login_security.domain.LoginMember;
+import com.banban.login_security.domain.RefreshToken;
 import com.banban.login_security.domain.TokenInfo;
 import com.banban.login_security.error.CustomException;
-import com.banban.login_security.mapper.MemberMapper;
 import com.banban.login_security.mapper.RefreshTokenMapper;
 import com.banban.login_security.security.JwtTokenProvider;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,14 +22,12 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class SecurityServiceImpl implements SecurityService{
 
-    private final MemberMapper memberMapper;
     private final RefreshTokenMapper refreshTokenMapper;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    @Override
-    public TokenInfo createTokens(LoginMember loginMember) {
-        /*
+    public Authentication getAuthentication(LoginMember loginMember){
+                /*
         id랑 pw로 Authentication 객체 생성
         JwtTokenProvider의 User~Token은 인증"완료"된 객체이고
         여기 User~Token은 인증"전"객체
@@ -39,15 +38,19 @@ public class SecurityServiceImpl implements SecurityService{
         UsernamePasswordAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(loginMember.getId(), loginMember.getPassword());
         try{
-            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-            return jwtTokenProvider.createTokens(authentication);
+            return authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         }catch (AuthenticationException e){
             throw new CustomException(SecurityErrorCode.SECURITY_AUTH_WRONG);
         }
     }
 
     @Override
-    public TokenInfo createAccessToken(String refreshToken) {
+    public TokenInfo createTokens(LoginMember loginMember) {
+        return jwtTokenProvider.createTokens(getAuthentication(loginMember));
+    }
+
+    @Override
+    public TokenInfo createAccessTokenForRef(String refreshToken) {
         // refresh token 저장소 확인
         if(refreshToken == null){
             throw new CustomException(SecurityErrorCode.NO_HEADER_REFRESH_TOKEN);
@@ -55,22 +58,22 @@ public class SecurityServiceImpl implements SecurityService{
         getRefreshToken(refreshToken); // 없으면 Exception 발생
 
         // access token 발급을 위해 refresh token 에서 유저 아이디 얻기
-
-
+        Claims claims = jwtTokenProvider.parseClaims(refreshToken);
+        String id = claims.getSubject();
+        String accessToken = jwtTokenProvider.createAccessToken(id, "basic");
         // access token 발급
-
-        return null;
+        return TokenInfo.of(accessToken, "", "Bearer");
     }
 
     @Override
-    public String getRefreshToken(String refreshToken) {
+    public RefreshToken getRefreshToken(String refreshToken) {
         return refreshTokenMapper.findRefreshToken(refreshToken)
-                .filter(v -> !v.isBlank()) // null, "", "   " 모두제외 (더욱 강화)
+//                .filter(v -> !v.isBlank()) // null, "", "   " 모두제외 (더욱 강화)
                 .orElseThrow(() -> new CustomException(SecurityErrorCode.REFRESH_TOKEN_NOT_EXIST));
     }
 
     @Override
-    public void addRefreshToken(String refreshToken) {
+    public void addRefreshToken(RefreshToken refreshToken) {
         try{
             refreshTokenMapper.insert(refreshToken);
         }catch (DataAccessException e){

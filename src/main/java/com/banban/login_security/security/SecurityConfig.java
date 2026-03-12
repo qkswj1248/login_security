@@ -1,6 +1,5 @@
 package com.banban.login_security.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,7 +44,7 @@ public class SecurityConfig{
 
                 // url 접근 설정
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/join", "users/login").permitAll()
+                        .requestMatchers("/users/join", "/users/login").permitAll()
                         .anyRequest().authenticated())
 
                 // jwt 필터 등록

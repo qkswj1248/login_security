@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public class TokenInfo {
     private String accessToken;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String refreshToken;
     private String grantType;
 

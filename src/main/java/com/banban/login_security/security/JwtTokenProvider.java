@@ -14,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Component
 public class JwtTokenProvider {
     private final Key key;
     private static final int SECOND = 60000 * 5; // 60000 = 1분
@@ -48,8 +50,7 @@ public class JwtTokenProvider {
 
     // 로그인 인증에 성공하면 access 랑 refresh 토큰 만들어주는 메소드
     public TokenInfo createTokens(Authentication authentication){
-
-        /*
+                        /*
         getAuthorities() 로 GrantedAuthority 를 포함한 collection 을 반환함
         collection 에서 GrantedAuthority 안에 있는 getAuthority 만 가져오기!
         가져온 값들 사이에 "," 넣고 String 으로 변환!
@@ -57,28 +58,28 @@ public class JwtTokenProvider {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-
-        Date accessTokenExpiresIn = new Date(System.currentTimeMillis() + SECOND);
-        Date refreshTokenExpiresIn = new Date(System.currentTimeMillis() + SECOND * 10);
-
-        String accessToken = createJwtToken(authentication, authorities, accessTokenExpiresIn);
-        String refreshToken = createJwtToken(authentication, authorities, refreshTokenExpiresIn);
-
+        String accessToken = createAccessToken(authentication.getName(), authorities);
+        String refreshToken = createRefreshToken(authentication.getName());
         return TokenInfo.of(accessToken, refreshToken, "Bearer");
     }
 
     // refresh token 이랑 access token 분리해서 따로 만들기
-
-    // 이유 : refresh token 만 받았을 때는 access token 만 새로 밠급해야하니까
-    public String createRefreshToken(Authentication authentication){
-        return "";
+    // 이유 : refresh token 만 받았을 때는 access token 만 새로 발급해야하니까
+    public String createRefreshToken(String userId){
+        Date refreshTokenExpiresIn = new Date(System.currentTimeMillis() + SECOND * 10);
+        return Jwts.builder()
+                .setSubject(userId)
+                .setExpiration(refreshTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
     }
 
-    public String createJwtToken(Authentication authentication, String auths, Date date){
+    public String createAccessToken(String userId, String auth){
+        Date accessTokenExpiresIn = new Date(System.currentTimeMillis() + SECOND);
         return Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim("auth", auths)
-                .setExpiration(date)
+                .setSubject(userId)
+                .claim("auth", auth)
+                .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }

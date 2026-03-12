@@ -5,9 +5,9 @@ import com.banban.login_security.code.UserErrorCode;
 import com.banban.login_security.domain.Member;
 import com.banban.login_security.error.CustomException;
 import com.banban.login_security.mapper.MemberMapper;
-import com.banban.login_security.mapper.RefreshTokenMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,7 +17,7 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService{
 
     private final MemberMapper memberMapper;
-    private final RefreshTokenMapper refreshTokenMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Optional<Member> findMember(String id) {
@@ -32,6 +32,7 @@ public class MemberServiceImpl implements MemberService{
         }
         // 없는 사용자라면 가입처리
         try{
+            member.setPassword(passwordEncoder.encode(member.getPassword()));
             memberMapper.insert(member);
         }catch (DataAccessException e){
             throw new CustomException(CommonErrorCode.DATA_ACCESS_ERROR, e.getMessage());

@@ -8,10 +8,12 @@ public class Member {
     private String id;
     private String password;
     private String name;
+    private String auth;
 
     public Member(String id, String name, String password){
         this.id = id;
         this.name = name;
         this.password = password;
+        this.auth = "basic";
     }
 }

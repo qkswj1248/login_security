@@ -34,6 +34,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String accessToken = jwtTokenProvider.resolveAccessToken(request);
             String path = request.getRequestURI();
 
+            if(path.equals("/users/login") || path.equals("users/join")){
+                filterChain.doFilter(request, response);
+            }
+
             // null 인지 확인하고 validateToken 으로 토큰 유효성 검사
             if(StringUtils.hasText(accessToken) && jwtTokenProvider.validateToken(accessToken)){
                 Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);

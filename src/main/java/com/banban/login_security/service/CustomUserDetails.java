@@ -18,8 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetailsService {
 
-    private MemberMapper memberMapper;
-    private PasswordEncoder passwordEncoder;
+    private final MemberMapper memberMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -29,11 +29,10 @@ public class CustomUserDetails implements UserDetailsService {
     }
 
     private UserDetails createUserDetails(Member member){
-        List<String> list = List.of("basic");
         return User.builder()
                 .username(member.getId())
-                .password(passwordEncoder.encode(member.getPassword()))
-                .roles(list.toArray(new String[0]))
+                .password(member.getPassword())
+                .roles(member.getAuth())
                 .build();
     }
 

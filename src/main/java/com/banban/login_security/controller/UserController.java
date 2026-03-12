@@ -37,6 +37,12 @@ public class UserController {
         return Response.toResponseEntity(SuccessCode.LOGIN_SUCCESS, tokenInfo);
     }
 
+    @PostMapping(value = "/auth", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Response> authForJson(@RequestBody String refreshToken){
+        TokenInfo tokenInfo = securityService.createAccessTokenForRef(refreshToken);
+        return Response.toResponseEntity(SuccessCode.AUTH_SUCCESS, null);
+    }
+
 
 
 }

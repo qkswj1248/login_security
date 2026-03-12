@@ -8,11 +8,11 @@
     </select>
 
     <select id="findById" parameterType="String" resultType="com.banban.login_security.domain.Member">
-        select ID, NAME, PASSWORD from USER_INFO where ID = #{id}
+        select ID, NAME, PASSWORD, AUTH from USER_INFO where ID = #{id}
     </select>
 
     <select id="insert" parameterType="com.banban.login_security.domain.Member">
-        INSERT INTO USER_INFO (id, password, name) VALUES (#{id}, #{password}, #{name})
+        INSERT INTO USER_INFO (id, password, name, auth) VALUES (#{id}, #{password}, #{name}, #{auth})
     </select>
 
 </mapper>
