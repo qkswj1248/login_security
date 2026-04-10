@@ -1,15 +1,16 @@
 package com.banban.login_security.service;
 
-import com.banban.login_security.domain.LoginMember;
+import com.banban.login_security.domain.Reissue;
+import com.banban.login_security.domain.member.LoginUserInfo;
 import com.banban.login_security.domain.RefreshToken;
 import com.banban.login_security.domain.TokenInfo;
 
 public interface SecurityService {
-    public TokenInfo createTokens(LoginMember loginMember);
+    public TokenInfo createTokensForLogin(LoginUserInfo loginMember);
 
-    public TokenInfo createAccessTokenForRef(String refreshToken);
+    public TokenInfo createTokensForRef(Reissue refreshToken);
 
-    public RefreshToken getRefreshToken(String refreshToken);
+    public RefreshToken getRefreshToken(Long userId);
 
     public void addRefreshToken(RefreshToken refreshToken);
 }

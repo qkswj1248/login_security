@@ -3,16 +3,17 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.banban.login_security.mapper.RefreshTokenMapper">
-    <select id="findRefreshToken" parameterType="String" resultType="com.banban.login_security.domain.RefreshToken">
-        select userid, token, created, expires from REFRESH_TOKEN where token = {#token}
+    <select id="findRefreshToken" parameterType="Long" resultType="com.banban.login_security.domain.RefreshToken">
+        select userid, token, created, expires from REFRESH_TOKEN where userid = #{userId}
     </select>
 
-    <select id="delete" parameterType="String">
-        delete from REFRESH_TOKEN where token = #{token}
-    </select>
+    <delete id="deleteForUserId" parameterType="Long">
+        delete from REFRESH_TOKEN where userid = #{userId}
+    </delete>
 
-    <select id="insert" parameterType="com.banban.login_security.domain.RefreshToken">
-        insert into REFRESH_TOKEN (userid, token, created, expires) VALUES (#{userId}, #{token}, #{created}, #{expires})
-    </select>
+    <insert id="insert" parameterType="com.banban.login_security.domain.RefreshToken">
+        insert into REFRESH_TOKEN (userid, token, expires, created)
+        VALUES (#{userId}, #{token}, #{expires}, #{created})
+    </insert>
 
 </mapper>

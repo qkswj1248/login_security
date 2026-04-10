@@ -1,7 +1,10 @@
 package com.banban.login_security.security;
 
 
+import com.banban.login_security.code.SecurityErrorCode;
 import com.banban.login_security.domain.TokenInfo;
+import com.banban.login_security.error.CustomException;
+import com.banban.login_security.type.Type;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -17,16 +20,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.security.SignatureException;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class JwtTokenProvider {
     private final Key key;
-    private static final int SECOND = 60000 * 5; // 60000 = 1분
+    private static final int SECOND = 10;
 
     /*
         yml 키를 받아서 풀고 난 다음 저장하는 생성자
@@ -43,43 +47,33 @@ public class JwtTokenProvider {
         return request.getHeader("Authorization");
     }
 
-    // refreshToken 반환
-    public String resolveRefreshToken(HttpServletRequest request){
-        return request.getHeader("RefreshToken");
+    // 로그인 인증에 성공하면 access 랑 refresh 토큰 만들어주는 메소드
+    public String createAccessToken(String userId, Type auth){
+        return createAccess(userId, auth.toString());
     }
 
-    // 로그인 인증에 성공하면 access 랑 refresh 토큰 만들어주는 메소드
-    public TokenInfo createTokens(Authentication authentication){
-                        /*
-        getAuthorities() 로 GrantedAuthority 를 포함한 collection 을 반환함
-        collection 에서 GrantedAuthority 안에 있는 getAuthority 만 가져오기!
-        가져온 값들 사이에 "," 넣고 String 으로 변환!
-         */
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-        String accessToken = createAccessToken(authentication.getName(), authorities);
-        String refreshToken = createRefreshToken(authentication.getName());
-        return TokenInfo.of(accessToken, refreshToken, "Bearer");
+    public TokenInfo createTokenInfo(String userId, String accessToken){
+        OffsetDateTime refExpiresIn = OffsetDateTime.now().plusSeconds(SECOND*100);
+        String refreshToken = createRef(userId, refExpiresIn);
+        return TokenInfo.of(accessToken, refreshToken, "Bearer", refExpiresIn, OffsetDateTime.now());
     }
 
     // refresh token 이랑 access token 분리해서 따로 만들기
     // 이유 : refresh token 만 받았을 때는 access token 만 새로 발급해야하니까
-    public String createRefreshToken(String userId){
-        Date refreshTokenExpiresIn = new Date(System.currentTimeMillis() + SECOND * 10);
+    public String createRef(String userId, OffsetDateTime refExpiresIn){
         return Jwts.builder()
                 .setSubject(userId)
-                .setExpiration(refreshTokenExpiresIn)
+                .setExpiration(Date.from(refExpiresIn.toInstant()))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String createAccessToken(String userId, String auth){
-        Date accessTokenExpiresIn = new Date(System.currentTimeMillis() + SECOND);
+    public String createAccess(String userId, String auth){
+        OffsetDateTime accessExpiresIn = OffsetDateTime.now().plusSeconds(SECOND);
         return Jwts.builder()
                 .setSubject(userId)
                 .claim("auth", auth)
-                .setExpiration(accessTokenExpiresIn)
+                .setExpiration(Date.from(accessExpiresIn.toInstant()))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -93,7 +87,6 @@ public class JwtTokenProvider {
         if(claims.get("auth") == null){
             log.warn("권한 정보가 없는 토큰입니다.");
         }
-
         // claim 에서 권한 정보 가져와서 리스트로 만들기
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get("auth").toString().split(","))
@@ -113,6 +106,7 @@ public class JwtTokenProvider {
             log.warn("잘못된 JWT 서명입니다.");
         }catch (ExpiredJwtException e){
             log.warn("만료된 JWT 토큰입니다.");
+            log.warn(e.toString());
         }catch (UnsupportedJwtException e){
             log.warn("지원되지 않는 JWT 토큰입니다.");
         }catch (IllegalArgumentException e){
@@ -123,9 +117,10 @@ public class JwtTokenProvider {
 
     public Claims parseClaims(String token){
         return Jwts.parserBuilder()
-                .setSigningKey(key).build()
+                .setSigningKey(key)
+                .setAllowedClockSkewSeconds(10)
+                .build()
                 .parseClaimsJws(token).getBody();
     }
-
 
 }

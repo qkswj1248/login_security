@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.AuthenticationException;
@@ -38,6 +39,10 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     응답을 따로 작성해야함...
      */
     private void setResponse(HttpServletResponse response, Code code) throws IOException{
+
+        response.setStatus(code.getHttpStatus().value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
         Map<String, Object> data = Map.of(
                 "name", code.name(),
                 "code", code.getCode(),

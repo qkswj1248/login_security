@@ -21,7 +21,7 @@ import org.springframework.http.ResponseEntity;
 @Builder
 public class Response{
     private final String name;
-    private final int code;
+    private final String code;
     private final String message;
     // null 값이나 length 가 0인 값들을 제외시키도록 조정할 수 있는 어노테이션
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -29,7 +29,7 @@ public class Response{
 
     public static ResponseEntity<Response> toResponseEntity(Code code, Object object){
         return ResponseEntity
-                .status(code.getCode())
+                .status(code.getHttpStatus())
                 .body(Response.builder()
                         .name(code.name())
                         .code(code.getCode())

@@ -2,7 +2,8 @@ package com.banban.login_security.service;
 
 import com.banban.login_security.code.CommonErrorCode;
 import com.banban.login_security.code.UserErrorCode;
-import com.banban.login_security.domain.Member;
+import com.banban.login_security.domain.member.FindMember;
+import com.banban.login_security.domain.member.Member;
 import com.banban.login_security.error.CustomException;
 import com.banban.login_security.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +21,20 @@ public class MemberServiceImpl implements MemberService{
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Optional<Member> findMember(String id) {
-        return memberMapper.findById(id);
+    public Optional<Member> findMemberForLocal(FindMember findMember) {
+        return memberMapper.findMemberByEmail(findMember);
     }
 
     @Override
-    public void addMember(Member member) {
+    public Optional<Member> findMemberForSocial(FindMember findMember) {
+        return memberMapper.findMemberByProvider(findMember);
+    }
+
+    @Override
+    public void addMemberForLocal(Member member) {
+        FindMember findMember = FindMember.createLocalFindMember(member.getEmail());
         // 이미 가입된 사용자인지 확인하기
-        if(findMember(member.getId()).isPresent()){
+        if(findMemberForLocal(findMember).isPresent()){
             throw new CustomException(UserErrorCode.EXISTING_USER);
         }
         // 없는 사용자라면 가입처리

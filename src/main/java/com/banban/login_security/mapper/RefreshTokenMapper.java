@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Mapper
 public interface RefreshTokenMapper {
-    Optional<RefreshToken> findRefreshToken(@Param("token") String token);
-    void deleteForOne(@Param("token") String token);
+    Optional<RefreshToken> findRefreshToken(@Param("userId") Long userId);
+    void deleteForUserId(@Param("userId") Long userId);
     void insert(RefreshToken refreshToken);
 }

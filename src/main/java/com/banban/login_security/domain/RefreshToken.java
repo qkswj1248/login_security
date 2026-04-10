@@ -4,11 +4,19 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter @Setter
 public class RefreshToken {
-    private String userId;
+    private Long userId;
     private String token;
-    private LocalDateTime expires;
-    private LocalDateTime created;
+    private OffsetDateTime expires;
+    private OffsetDateTime created;
+
+    public RefreshToken(Long userId, String token, OffsetDateTime expires, OffsetDateTime created){
+        this.userId = userId;
+        this.token = token;
+        this.expires = expires;
+        this.created = created;
+    }
 }

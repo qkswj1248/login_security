@@ -36,6 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if(path.equals("/users/login") || path.equals("users/join")){
                 filterChain.doFilter(request, response);
+                return;
             }
 
             // null 인지 확인하고 validateToken 으로 토큰 유효성 검사
