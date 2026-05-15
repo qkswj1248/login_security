@@ -3,6 +3,7 @@ package com.banban.login_security.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableAsync
 @RequiredArgsConstructor
 public class SecurityConfig{
 
@@ -38,6 +40,7 @@ public class SecurityConfig{
                 .exceptionHandling(exception ->
                         exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
 
+
                 // 세션 처리
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -49,7 +52,7 @@ public class SecurityConfig{
 
                 // jwt 필터 등록
                 .addFilterBefore(
-                        new JwtAuthenticationFilter(jwtTokenProvider),
+                        new JwtAuthenticationFilter(jwtTokenProvider, jwtAuthenticationEntryPoint),
                         UsernamePasswordAuthenticationFilter.class
                 );
 

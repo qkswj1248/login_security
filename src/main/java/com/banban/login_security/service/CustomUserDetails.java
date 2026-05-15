@@ -27,7 +27,8 @@ public class CustomUserDetails implements UserDetailsService {
         FindMember findMember = FindMember.createLocalFindMember(email);
 
         Member member = memberMapper.findMemberByEmail(findMember)
-                .orElseThrow(() -> new CustomException(SecurityErrorCode.SECURITY_USER_NOT_FOUND));
+                .orElseThrow(() ->
+                        new CustomException(SecurityErrorCode.SECURITY_AUTH_WRONG, "유저를 찾을 수 없습니다."));
 
         return createUserDetails(member);
     }

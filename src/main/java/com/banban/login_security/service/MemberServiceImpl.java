@@ -35,7 +35,7 @@ public class MemberServiceImpl implements MemberService{
         FindMember findMember = FindMember.createLocalFindMember(member.getEmail());
         // 이미 가입된 사용자인지 확인하기
         if(findMemberForLocal(findMember).isPresent()){
-            throw new CustomException(UserErrorCode.EXISTING_USER);
+            throw new CustomException(UserErrorCode.EXISTING_USER, "이미 가입된 사용자 입니다.");
         }
         // 없는 사용자라면 가입처리
         try{
@@ -45,4 +45,6 @@ public class MemberServiceImpl implements MemberService{
             throw new CustomException(CommonErrorCode.DATA_ACCESS_ERROR, e.getMessage());
         }
     }
+
+
 }

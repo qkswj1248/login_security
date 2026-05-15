@@ -3,17 +3,28 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.banban.login_security.mapper.RefreshTokenMapper">
-    <select id="findRefreshToken" parameterType="Long" resultType="com.banban.login_security.domain.RefreshToken">
-        select userid, token, created, expires from REFRESH_TOKEN where userid = #{userId}
+    <select id="findRefreshTokenForUserId" parameterType="Long" resultType="com.banban.login_security.domain.RefreshToken">
+        select userid, token, agent, deviceId, created, expires from REFRESH_TOKEN where userid = #{userId}
     </select>
 
+    <select id="findRefreshTokenForDeviceId" resultType="com.banban.login_security.domain.RefreshToken">
+        select userid, token, agent, deviceId, created, expires from REFRESH_TOKEN where userid = #{userId} and deviceId = #{deviceId}
+    </select>
+
+    <update id="updateForDeviceId">
+        update REFRESH_TOKEN set token = #{ref.token}, agent = #{ref.agent}, deviceId = #{ref.deviceId}, created = #{ref.created}, expires = #{ref.expires} where userId = #{ref.userId} and deviceId = #{oldest}
+    </update>
+
     <delete id="deleteForUserId" parameterType="Long">
-        delete from REFRESH_TOKEN where userid = #{userId}
+        delete from REFRESH_TOKEN where userId = #{userId}
     </delete>
 
-    <insert id="insert" parameterType="com.banban.login_security.domain.RefreshToken">
-        insert into REFRESH_TOKEN (userid, token, expires, created)
-        VALUES (#{userId}, #{token}, #{expires}, #{created})
-    </insert>
+    <delete id="deleteForDeviceId">
+        delete from REFRESH_TOKEN where userId = #{userId} and deviceId = #{deviceId}
+    </delete>
 
+    <insert id="insert" parameterType="com.banban.login_security.domain.LoginHistory">
+        insert into REFRESH_TOKEN (userid, token, agent, deviceId, expires, created)
+        VALUES (#{userId}, #{token}, #{agent}, #{deviceId}, #{expires}, #{created})
+    </insert>
 </mapper>

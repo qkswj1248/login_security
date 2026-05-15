@@ -5,8 +5,8 @@ import lombok.Setter;
 
 @Getter @Setter
 public class LoginMemberForProvider {
-    String provider;
-    String accessToken;
+    private final String provider;
+    private final String accessToken;
 
     public LoginMemberForProvider(String provider, String accessToken){
         this.provider = provider;

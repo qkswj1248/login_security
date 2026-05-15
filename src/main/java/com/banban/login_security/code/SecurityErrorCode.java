@@ -14,15 +14,15 @@ public enum SecurityErrorCode implements Code{
     SECURITY_USER_NOT_FOUND("", "유저를 찾을 수 없습니다."),
     SECURITY_PASSWORD_IS_WRONG("", "패스워드가 틀립니다."),
     SECURITY_AUTH_WRONG("", "아이디나 비밀번호가 틀립니다."),
-    ACCESS_DENIED("", "접근 금지"),
+    NOT_COOKIE("", "쿠키가 없습니다."),
 
     CUSTOM_WRONG_TYPE_TOKEN("", "잘못된 타입의 토큰"),
     CUSTOM_EXPIRED_TOKEN("", "토큰이 만료됨"),
     CUSTOM_UNSUPPORTED_TOKEN("", "지원되지 않는 토큰"),
     REFRESH_TOKEN_NOT_EXIST("", "Refresh Token 이 존재하지 않습니다."),
-
-    STOLEN_REFRESH_TOKEN("", "탈취된 Refresh Token 입니다."),
-    NO_HEADER_REFRESH_TOKEN("", "헤더에 Refresh Token 이 존재하지 않습니다.")
+    STOLEN_REFRESH_TOKEN("", "탈취된 Refresh 토큰입니다."),
+    NOT_ACCESS_TOKEN("", "access Token 이 아닙니다."),
+    DANGEROUS_RISK_SCORE("", "risk 점수가 위험합니다."),
     ;
     private final String code;
     private final String message;

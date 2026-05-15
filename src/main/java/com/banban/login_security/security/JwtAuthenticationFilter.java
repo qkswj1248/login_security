@@ -1,10 +1,12 @@
 package com.banban.login_security.security;
 
+import com.banban.login_security.code.SecurityErrorCode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -20,10 +22,12 @@ import java.io.IOException;
     join, login url 을 제외한 다른 접근은 다 이 필터를 거치게 해놨다
     인증이 되지 않으면 jwt 예외 발생
  */
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     public final JwtTokenProvider jwtTokenProvider;
+    public final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private static final String ACCESS_TOKEN = "Authorization";
     private static final String REFRESH_TOKEN = "RefreshToken";
 
@@ -34,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String accessToken = jwtTokenProvider.resolveAccessToken(request);
             String path = request.getRequestURI();
 
-            if(path.equals("/users/login") || path.equals("users/join")){
+            if(path.equals("/users/login") || path.equals("/users/join") || path.equals("/users/auth")){
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -46,8 +50,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 이렇게 만든 인증토큰 담아두면 다음 필터들이 인증된걸 알고 넘어가줌
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        }catch (Exception e){
-            logger.warn("JWT 처리 중 예외 발생 : {}", e);
+        }catch (JwtAuthenticationException e) {
+            log.warn("JWT 인증 중 예외 발생 : {}", e.getMessage());
+            jwtAuthenticationEntryPoint.commence(request, response, e);
+            return;
         }
         filterChain.doFilter(request, response);
     }

@@ -3,11 +3,11 @@ package com.banban.login_security.security;
 
 import com.banban.login_security.code.SecurityErrorCode;
 import com.banban.login_security.domain.TokenInfo;
-import com.banban.login_security.error.CustomException;
 import com.banban.login_security.type.Type;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +20,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.security.SignatureException;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,7 +29,7 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
     private final Key key;
-    private static final int SECOND = 10;
+    private static final int MINUTE = 60;
 
     /*
         yml 키를 받아서 풀고 난 다음 저장하는 생성자
@@ -44,7 +43,16 @@ public class JwtTokenProvider {
 
     // request 에서 Auth 를 가져와 반환 (없으면 null 반환)
     public String resolveAccessToken(HttpServletRequest request){
-        return request.getHeader("Authorization");
+        Cookie[] cookies = request.getCookies();
+
+        if(cookies != null){
+            for(Cookie cookie : cookies){
+                if("accessToken".equals(cookie.getName())){
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 
     // 로그인 인증에 성공하면 access 랑 refresh 토큰 만들어주는 메소드
@@ -52,10 +60,9 @@ public class JwtTokenProvider {
         return createAccess(userId, auth.toString());
     }
 
-    public TokenInfo createTokenInfo(String userId, String accessToken){
-        OffsetDateTime refExpiresIn = OffsetDateTime.now().plusSeconds(SECOND*100);
-        String refreshToken = createRef(userId, refExpiresIn);
-        return TokenInfo.of(accessToken, refreshToken, "Bearer", refExpiresIn, OffsetDateTime.now());
+    public String createRefreshToken(String userId){
+        OffsetDateTime refExpiresIn = OffsetDateTime.now().plusMinutes(MINUTE*24);
+        return createRef(userId, refExpiresIn);
     }
 
     // refresh token 이랑 access token 분리해서 따로 만들기
@@ -69,7 +76,7 @@ public class JwtTokenProvider {
     }
 
     public String createAccess(String userId, String auth){
-        OffsetDateTime accessExpiresIn = OffsetDateTime.now().plusSeconds(SECOND);
+        OffsetDateTime accessExpiresIn = OffsetDateTime.now().plusMinutes(MINUTE);
         return Jwts.builder()
                 .setSubject(userId)
                 .claim("auth", auth)
@@ -85,7 +92,7 @@ public class JwtTokenProvider {
         // 먼저 토큰 복호화
         Claims claims = parseClaims(accessToken);
         if(claims.get("auth") == null){
-            log.warn("권한 정보가 없는 토큰입니다.");
+            throw new JwtAuthenticationException(SecurityErrorCode.NOT_ACCESS_TOKEN);
         }
         // claim 에서 권한 정보 가져와서 리스트로 만들기
         Collection<? extends GrantedAuthority> authorities =
@@ -106,7 +113,6 @@ public class JwtTokenProvider {
             log.warn("잘못된 JWT 서명입니다.");
         }catch (ExpiredJwtException e){
             log.warn("만료된 JWT 토큰입니다.");
-            log.warn(e.toString());
         }catch (UnsupportedJwtException e){
             log.warn("지원되지 않는 JWT 토큰입니다.");
         }catch (IllegalArgumentException e){

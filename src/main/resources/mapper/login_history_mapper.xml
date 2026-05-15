@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.banban.login_security.mapper.LoginHistoryMapper">
+    <select id="countRecentLogin" parameterType="Long" resultType="int">
+        select count(*) from login_history
+        where user_id = #{userId} and login_at >= utc_timestamp() - interval 10 minute and success = 0;
+    </select>
+
+    <select id="findRecentByUserIdForDays" resultType="com.banban.login_security.domain.LoginHistory">
+        select * from login_history
+        where user_id = #{userId} and login_at >= utc_timestamp() - interval #{times} day;
+    </select>
+
+    <select id="findRecentByUserIdForMinutes" resultType="com.banban.login_security.domain.LoginHistory">
+        select * from login_history
+        where user_id = #{userId} and login_at >= utc_timestamp() - interval #{times} minute;
+    </select>
+
+    <insert id="insert" parameterType="com.banban.login_security.domain.LoginHistory">
+        insert into login_history
+        (user_id, user_email, ip_address, user_agent, device_id, login_at, success, fail_reason)
+        values (#{userId}, #{userEmail}, #{ipAddress}, #{userAgent}, #{deviceId}, #{loginAt}, #{success}, #{failReason});
+    </insert>
+
+</mapper>

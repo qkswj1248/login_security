@@ -14,5 +14,4 @@ public class SocialUserInfo {
         this.providerId = providerId;
         this.email = email;
     }
-
 }

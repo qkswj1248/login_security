@@ -4,7 +4,6 @@ import com.banban.login_security.domain.member.FindMember;
 import com.banban.login_security.domain.member.Member;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.util.List;
 import java.util.Optional;
 /*
     Optional은 값이 없을 수 있을 때(null) 사용하는 것으로

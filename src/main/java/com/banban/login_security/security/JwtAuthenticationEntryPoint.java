@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
@@ -25,7 +27,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         .autentication 이라는 함수(userDetails를 사용하는 인증의 핵심 함수)에서
         UserDetails가 UserNotFoundException을 던지면 throw하는 Exception이다!
         */
-        if(authException instanceof BadCredentialsException){
+        if(authException instanceof JwtAuthenticationException){
+            setResponse(response, ((JwtAuthenticationException) authException).getErrorCode());
+        }else if(authException instanceof BadCredentialsException){
             setResponse(response, SecurityErrorCode.SECURITY_PASSWORD_IS_WRONG);
         }else if(authException instanceof InsufficientAuthenticationException){
             setResponse(response, SecurityErrorCode.CUSTOM_EXPIRED_TOKEN);
@@ -43,10 +47,12 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setStatus(code.getHttpStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
+        log.warn("jwt entry point error : {}", code.getMessage());
+
         Map<String, Object> data = Map.of(
                 "name", code.name(),
                 "code", code.getCode(),
-                "message", code.getMessage()
+                "message", "인증 에러"
         );
         final ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(response.getOutputStream(), data);

@@ -1,12 +1,14 @@
 package com.banban.login_security.error;
 
+import com.banban.login_security.code.Code;
 import com.banban.login_security.code.SecurityErrorCode;
 import com.banban.login_security.domain.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.util.Arrays;
 
 @Slf4j
 @RestControllerAdvice
@@ -14,14 +16,19 @@ public class GlobalException{
     // 내가 설정한 예외를 잡아서 처리(controller 단의)
     @ExceptionHandler(CustomException.class)
     private ResponseEntity<Response> handleCustomException(CustomException e){
-        log.warn("customException : {}", e.getCode().getMessage());
-        return Response.toResponseEntity(e.getCode(), e.getObject());
+        log.warn("customException : {}", e.getMessage());
+        if(e.getObject() != null){
+            log.warn("detail : {}", e.getObject());
+        }
+
+        return Response.toResponseEntity(e.getCode(), null);
     }
 
     // 알 수 없는 모든 예외 처리
     @ExceptionHandler(Exception.class)
     private ResponseEntity<Response> handleAllException(Exception e){
-        log.error("서버 내부 에러 발생 : {}", e.getMessage());
+        log.error("서버 내부 에러 발생 : {}", e.toString());
+        log.error(Arrays.toString(e.getStackTrace()));
         return Response.toResponseEntity(SecurityErrorCode.UNKNOWN_ERROR, e.getMessage());
     }
     // 언체크 예외를 잡아서 처리

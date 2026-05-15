@@ -8,8 +8,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum UserErrorCode implements Code{
     USER_NOT_FOUND("", "해당 유저 정보가 없습니다."),
-    USER_PASSWORD_FAIL("", "비밀번호가 맞지 않습니다."),
-    EXISTING_USER("", "이미 존재하는 유저입니다."),
+    USER_PASSWORD_FAIL("", "아이디나 비밀번호가 맞지 않습니다."),
+    EXISTING_USER("", "이미 존재하는 유저입니다.")
     ;
     private final String code;
     private final String message;
