@@ -1,9 +1,6 @@
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/login_security?autoReconnect=true&serverTimezone=UTC
-    username: root
-    password: "plus&data51"
+  application:
+    name: agent-security
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
@@ -17,3 +14,7 @@ server:
 property:
   test:
     name: property depth test
+
+  h2:
+    console:
+      enabled: true

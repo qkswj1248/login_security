@@ -3,8 +3,6 @@ package com.banban.login_security.security;
 import com.banban.login_security.code.SecurityErrorCode;
 import com.banban.login_security.domain.*;
 import com.banban.login_security.error.CustomException;
-import com.banban.login_security.security.risk.LoginAnalysisDataProvider;
-import com.banban.login_security.security.risk.RiskAnalyzer;
 import com.banban.login_security.service.CustomUserDetails;
 import com.banban.login_security.util.CommonFunction;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +29,6 @@ public class BasicUsernamePwdAuthenticationProvider implements AuthenticationPro
     private final CustomUserDetails customUserDetails;
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher publisher;
-    private final LoginAnalysisDataProvider loginAnalysisDataProvider;
-    private final RiskAnalyzer riskAnalyzer;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -51,22 +47,6 @@ public class BasicUsernamePwdAuthenticationProvider implements AuthenticationPro
         }
         boolean success = passwordEncoder.matches(pwd, userDetails.getPassword());
         LoginHistory loginHistory = new LoginHistory(userId, authentication.getName(), ip, agent, deviceId, OffsetDateTime.now(), success, "");
-
-        /* risk 정책 실행
-        여기서 하는 이유는 비밀번호 5회 이상 실패하면
-        추가로 캡차를 넣거나 보안적 부분을 추가해야하기 때문
-        * */
-        LoginAnalysisData data = loginAnalysisDataProvider.load(userId);
-        RiskResult riskResult = riskAnalyzer.analyze(loginHistory, data);
-
-        log.info("userId : {}, riskResult : {}", userId, riskResult.totalScore());
-
-        if(riskResult.isDangerous()){
-            loginHistory.setSuccess(false);
-            loginHistory.setFailReason("리스크 점수가 너무 높음");
-            publisher.publishEvent(loginHistory);
-            throw new CustomException(SecurityErrorCode.DANGEROUS_RISK_SCORE, "리스크 점수 70 이상임");
-        }
 
         if(success){
             List<GrantedAuthority> authorities = new ArrayList<>();

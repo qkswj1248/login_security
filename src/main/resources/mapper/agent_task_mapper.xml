@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.banban.login_security.mapper.AgentTaskMapper">
+    <select id="findByTaskId" parameterType="Long" resultType="com.banban.login_security.domain.agent.AgentTask">
+        select ID, USER_ID, AGENT_ID, STATUS, PURPOSE, STARTED_AT, EXPIRED_AT from AGENT_TASK where TASK_ID = #{task_id}
+    </select>
+
+    <select id="findByAgentId" parameterType="Long" resultType="com.banban.login_security.domain.agent.AgentTask">
+        select ID, USER_ID, AGENT_ID, STATUS, PURPOSE, STARTED_AT, EXPIRED_AT from AGENT_TASK where AGENT_ID = #{agent_id}
+    </select>
+
+    <insert id="insert" parameterType="com.banban.login_security.domain.agent.AgentTask">
+        INSERT INTO AGENT_TASK (user_id, agent_id, status, purpose, started_at, expired_at) values (#{user_id}, #{agent_id}, #{status}, #{purpose}, #{started_at}, #{expired_at})
+    </insert>
+</mapper>

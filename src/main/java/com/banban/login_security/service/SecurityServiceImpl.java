@@ -6,8 +6,6 @@ import com.banban.login_security.domain.member.LoginUserInfo;
 import com.banban.login_security.error.CustomException;
 import com.banban.login_security.mapper.RefreshTokenMapper;
 import com.banban.login_security.security.JwtTokenProvider;
-import com.banban.login_security.security.risk.LoginAnalysisDataProvider;
-import com.banban.login_security.security.risk.RiskAnalyzer;
 import com.banban.login_security.type.Auth;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -33,10 +31,7 @@ public class SecurityServiceImpl implements SecurityService{
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RefreshTokenService refreshTokenService;
-    private final LoginHistoryService loginHistoryService;
     private final ApplicationEventPublisher publisher;
-    private final RiskAnalyzer riskAnalyzer;
-    private final LoginAnalysisDataProvider loginAnalysisDataProvider;
 
     public Authentication getAuthentication(UsernamePasswordAuthenticationToken authenticationToken){
                 /*
@@ -103,8 +98,6 @@ public class SecurityServiceImpl implements SecurityService{
         // rtr : refresh token 새로 발급
         String accessToken = jwtTokenProvider.createAccessToken(userId.toString(), Auth.BASIC);
         RefreshToken refreshToken = getRefreshToken(userId, details);
-
-
 
         publisher.publishEvent(new LoginHistory(userId, "", details.ip(), details.agent(), refreshToken.getDeviceId(), OffsetDateTime.now(), true, ""));
         return new TokenInfo(accessToken, refreshToken.getToken(), refreshToken.getDeviceId());

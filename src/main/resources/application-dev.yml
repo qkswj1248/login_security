@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:agent_security;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    diver-class-name: org.h2.Driver
+
+  h2:
+    console:
+      enabled: true

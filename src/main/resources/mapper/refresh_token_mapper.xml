@@ -23,7 +23,7 @@
         delete from REFRESH_TOKEN where userId = #{userId} and deviceId = #{deviceId}
     </delete>
 
-    <insert id="insert" parameterType="com.banban.login_security.domain.LoginHistory">
+    <insert id="insert" parameterType="com.banban.login_security.domain.RefreshToken">
         insert into REFRESH_TOKEN (userid, token, agent, deviceId, expires, created)
         VALUES (#{userId}, #{token}, #{agent}, #{deviceId}, #{expires}, #{created})
     </insert>

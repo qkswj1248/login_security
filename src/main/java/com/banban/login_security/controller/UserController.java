@@ -28,7 +28,6 @@ public class UserController {
 
     private final MemberService memberService;
     private final SecurityService securityService;
-    private final RefreshTokenService refreshTokenService;
     private final CommonFunction commonFunction;
 
     @PostMapping(value = "/join", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -37,6 +36,7 @@ public class UserController {
         log.info("회원가입 완료 : {}", member.getId());
         return Response.toResponseEntity(SuccessCode.CREATED_SUCCESS, null);
     }
+
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Response> loginForJson(@RequestBody LoginUserInfo loginMember, HttpServletRequest request){

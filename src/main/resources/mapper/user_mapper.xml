@@ -4,7 +4,7 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.banban.login_security.mapper.MemberMapper">
     <select id="findMemberByEmail" parameterType="com.banban.login_security.domain.member.FindMember" resultType="com.banban.login_security.domain.member.Member">
-        select ID, EMAIL, PASSWORD, NAME, PROVIDER, PROVIDER_ID, AUTH from USER_INFO where email = #{email} and provider = "LOCAL"
+        select ID, EMAIL, PASSWORD, NAME, PROVIDER, PROVIDER_ID, AUTH from USER_INFO where email = #{email} and provider = 'LOCAL'
     </select>
 
     <select id="findMemberByProvider" parameterType="com.banban.login_security.domain.member.FindMember" resultType="com.banban.login_security.domain.member.Member">
@@ -12,7 +12,7 @@
     </select>
 
     <insert id="insert" parameterType="com.banban.login_security.domain.member.Member">
-        INSERT INTO USER_INFO (id, email, password, name, provider, provider_id, auth) VALUES (#{id}, #{email}, #{password}, #{name}, #{provider}, #{providerId}, #{auth})
+        INSERT INTO USER_INFO (email, password, name, provider, provider_id, auth) VALUES (#{email}, #{password}, #{name}, #{provider}, #{providerId}, #{auth})
     </insert>
 
 </mapper>

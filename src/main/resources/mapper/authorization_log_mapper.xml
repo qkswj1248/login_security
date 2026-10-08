@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.banban.login_security.mapper.AuthorizationLoGMapper">
+    <insert id="insert" parameterType="com.banban.login_security.domain.agent.AuthorizationLog">
+        INSERT INTO AUTHORIZATION_LOG (principal_type, principal_id, task_id, resource, action, scope, result, reason)
+        values (#{principal_type}, #{principal_id}, #{task_id}, #{resource}, #{action}, #{scope}, #{result}, #{reason})
+    </insert>
+</mapper>
