@@ -79,5 +79,4 @@ public class UserController {
         log.info("토큰 인증 성공");
         return Response.toResponseEntity(SuccessCode.AUTH_SUCCESS, null);
     }
-
 }
