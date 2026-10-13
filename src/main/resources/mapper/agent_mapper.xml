@@ -15,7 +15,22 @@
         update AGENT set status = #{status} where id = #{id}
     </update>
 
-    <insert id="insert" parameterType="com.banban.login_security.domain.agent.Agent">
+    <insert id="insert" parameterType="com.banban.login_security.domain.agent.Agent" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO AGENT (user_id, name, status, created_at) values (#{user_id}, #{name}, #{status}, #{created_at})
     </insert>
+    <select id="findByUserId" resultType="com.banban.login_security.domain.agent.Agent">
+        select ID, USER_ID, NAME, STATUS, CREATED_AT from AGENT where USER_ID = #{userId} order by ID
+    </select>
+
+    <update id="changeAgentName">
+        update AGENT set NAME = #{name} where ID = #{id} and USER_ID = #{user_id}
+    </update>
+
+    <update id="changeOwnedAgentStatus">
+        update AGENT set STATUS = #{status} where ID = #{id} and USER_ID = #{user_id}
+    </update>
+
+    <delete id="delete">
+        delete from AGENT where ID = #{id} and USER_ID = #{user_id}
+    </delete>
 </mapper>
