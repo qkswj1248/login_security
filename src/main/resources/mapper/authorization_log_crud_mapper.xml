@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.banban.login_security.mapper.AuthorizationLogCrudMapper">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into AUTHORIZATION_LOG (PRINCIPAL_TYPE, PRINCIPAL_ID, TASK_ID, RESOURCE, ACTION, SCOPE, RESULT, REASON)
+        values (#{principal_type}, #{principal_id}, #{task_id}, #{resource}, #{action}, #{scope}, #{result}, #{reason})
+    </insert>
+
+    <select id="findByTaskId" resultType="com.banban.login_security.domain.agent.AuthorizationLogEntry">
+        select ID, PRINCIPAL_TYPE, PRINCIPAL_ID, TASK_ID, RESOURCE, ACTION, SCOPE, RESULT, REASON
+        from AUTHORIZATION_LOG
+        where TASK_ID = #{task_id} and PRINCIPAL_TYPE = 'AGENT' and PRINCIPAL_ID = #{agent_id}
+        order by ID
+    </select>
+
+    <select id="findById" resultType="com.banban.login_security.domain.agent.AuthorizationLogEntry">
+        select ID, PRINCIPAL_TYPE, PRINCIPAL_ID, TASK_ID, RESOURCE, ACTION, SCOPE, RESULT, REASON
+        from AUTHORIZATION_LOG
+        where ID = #{id} and TASK_ID = #{task_id} and PRINCIPAL_TYPE = 'AGENT' and PRINCIPAL_ID = #{agent_id}
+    </select>
+
+    <update id="update">
+        update AUTHORIZATION_LOG set RESOURCE = #{resource}, ACTION = #{action}, SCOPE = #{scope},
+                                     RESULT = #{result}, REASON = #{reason}
+        where ID = #{id} and TASK_ID = #{task_id} and PRINCIPAL_TYPE = 'AGENT' and PRINCIPAL_ID = #{principal_id}
+    </update>
+
+    <delete id="delete">
+        delete from AUTHORIZATION_LOG
+        where ID = #{id} and TASK_ID = #{task_id} and PRINCIPAL_TYPE = 'AGENT' and PRINCIPAL_ID = #{agent_id}
+    </delete>
+</mapper>
