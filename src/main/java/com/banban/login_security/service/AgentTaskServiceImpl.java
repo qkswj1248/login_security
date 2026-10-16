@@ -44,7 +44,7 @@ public class AgentTaskServiceImpl implements AgentTaskService {
         task.setId(null);
         task.setStatus(TaskStatus.RUNNING.name());
         task.setCreated_at(OffsetDateTime.now());
-        task.setExpired_at(OffsetDateTime.now().plusMinutes(10));
+        task.setExpired_at(OffsetDateTime.now().plusMinutes(30));
         agentTaskMapper.insert(task);
     }
 
