@@ -2,9 +2,12 @@ package com.banban.login_security.mapper;
 
 import com.banban.login_security.domain.agent.AgentPermission;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Optional;
 
+@Mapper
 public interface AgentPermissionMapper {
     void insert(AgentPermission agentPermission);
     /*
@@ -17,4 +20,7 @@ public interface AgentPermissionMapper {
      */
     List<AgentPermission> findByAgentId(Long agent_id);
     List<AgentPermission> findByResource(@Param("agent_id") Long agent_id, @Param("resource") String resource, @Param("action") String action);
+    Optional<AgentPermission> findById(@Param("agent_id") Long agentId, @Param("id") Long id);
+    void update(AgentPermission permission);
+    void delete(@Param("agent_id") Long agentId, @Param("id") Long id);
 }

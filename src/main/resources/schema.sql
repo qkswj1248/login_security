@@ -40,6 +40,7 @@ CREATE TABLE AGENT (
 );
 
 CREATE TABLE AGENT_PERMISSION (
+                                  ID BIGINT AUTO_INCREMENT PRIMARY KEY,
                                   AGENT_ID BIGINT NOT NULL,
                                   RESOURCE VARCHAR(255),
                                   ACTION VARCHAR(255),

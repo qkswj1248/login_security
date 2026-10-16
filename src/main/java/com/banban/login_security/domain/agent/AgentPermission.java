@@ -1,12 +1,15 @@
 package com.banban.login_security.domain.agent;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.OffsetDateTime;
 
 @Getter @Setter
+@NoArgsConstructor
 public class AgentPermission {
+    private Long id;
     private Long agent_id;
     private String resource;
     private String action;

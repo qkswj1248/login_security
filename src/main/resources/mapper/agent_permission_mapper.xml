@@ -4,14 +4,27 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.banban.login_security.mapper.AgentPermissionMapper">
     <select id="findByAgentId" parameterType="Long" resultType="com.banban.login_security.domain.agent.AgentPermission">
-        select AGENT_ID, RESOURCE, ACTION, SCOPE, CREATED_AT from AGENT_PERMISSION where AGENT_ID = #{agent_id}
+        select ID, AGENT_ID, RESOURCE, ACTION, SCOPE, CREATED_AT from AGENT_PERMISSION where AGENT_ID = #{agent_id} order by ID
     </select>
 
     <select id="findByResource" resultType="com.banban.login_security.domain.agent.AgentPermission">
-        select AGENT_ID, RESOURCE, ACTION, SCOPE, CREATED_AT from AGENT_PERMISSION where AGENT_ID = #{agent_id} and RESOURCE = #{resource} and ACTION = #{action}
+        select ID, AGENT_ID, RESOURCE, ACTION, SCOPE, CREATED_AT from AGENT_PERMISSION where AGENT_ID = #{agent_id} and RESOURCE = #{resource} and ACTION = #{action}
     </select>
 
-    <insert id="insert" parameterType="com.banban.login_security.domain.agent.AgentPermission">
+    <insert id="insert" parameterType="com.banban.login_security.domain.agent.AgentPermission" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO AGENT_PERMISSION (agent_id, resource, action, scope, created_at) values (#{agent_id}, #{resource}, #{action}, #{scope}, #{created_at})
     </insert>
+    <select id="findById" resultType="com.banban.login_security.domain.agent.AgentPermission">
+        select ID, AGENT_ID, RESOURCE, ACTION, SCOPE, CREATED_AT from AGENT_PERMISSION
+        where ID = #{id} and AGENT_ID = #{agent_id}
+    </select>
+
+    <update id="update" parameterType="com.banban.login_security.domain.agent.AgentPermission">
+        update AGENT_PERMISSION set RESOURCE = #{resource}, ACTION = #{action}, SCOPE = #{scope}
+        where ID = #{id} and AGENT_ID = #{agent_id}
+    </update>
+
+    <delete id="delete">
+        delete from AGENT_PERMISSION where ID = #{id} and AGENT_ID = #{agent_id}
+    </delete>
 </mapper>
