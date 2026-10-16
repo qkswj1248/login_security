@@ -129,6 +129,7 @@ class TaskControllerTests {
                 .andExpect(jsonPath("$.detail.status").value("CANCELLED"));
     }
 
+    // expired 부분을 지우거나 test 삭제 필요
     @Test
     void invalidInputAndInactiveAgentAreRejected() throws Exception {
         long agentId = createAgent();
