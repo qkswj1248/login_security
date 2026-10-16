@@ -10,5 +10,4 @@ public class AgentRequest {
     private String resource;
     private String action;
     private String scope;
-    private String reason;
 }

@@ -44,6 +44,7 @@ public class AgentTaskServiceImpl implements AgentTaskService {
         task.setId(null);
         task.setStatus(TaskStatus.RUNNING.name());
         task.setCreated_at(OffsetDateTime.now());
+        task.setExpired_at(OffsetDateTime.now().plusMinutes(10));
         agentTaskMapper.insert(task);
     }
 
@@ -91,8 +92,7 @@ public class AgentTaskServiceImpl implements AgentTaskService {
     }
 
     private void checkTask(AgentTask task) {
-        if (task.getPurpose() == null || task.getPurpose().isBlank() || task.getPurpose().length() > 500
-                || task.getExpired_at() == null || !task.getExpired_at().isAfter(OffsetDateTime.now())) {
+        if (task.getPurpose() == null || task.getPurpose().isBlank() || task.getPurpose().length() > 500) {
             throw new CustomException(TaskErrorCode.INVALID_TASK, "작업 목적과 미래의 만료 시각이 필요합니다");
         }
     }

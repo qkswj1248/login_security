@@ -72,6 +72,7 @@ public class TaskController {
 
     @PostMapping(value = "/authorization/check", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Response> authCheck(@RequestBody AgentRequest agentRequest){
+
         return Response.toResponseEntity(SuccessCode.OK, null);
     }
 }
