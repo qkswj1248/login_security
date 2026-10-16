@@ -1,11 +1,13 @@
 package com.banban.login_security.domain.agent;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.OffsetDateTime;
 
 @Getter @Setter
+@NoArgsConstructor
 public class AgentTask {
     private Long id;
     private Long user_id;

@@ -4,14 +4,38 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.banban.login_security.mapper.AgentTaskMapper">
     <select id="findByTaskId" parameterType="Long" resultType="com.banban.login_security.domain.agent.AgentTask">
-        select ID, USER_ID, AGENT_ID, STATUS, PURPOSE, STARTED_AT, EXPIRED_AT from AGENT_TASK where TASK_ID = #{task_id}
+        select ID, USER_ID, AGENT_ID, STATUS, PURPOSE, CREATED_AT, EXPIRED_AT from AGENT_TASK where ID = #{task_id}
     </select>
 
     <select id="findByAgentId" parameterType="Long" resultType="com.banban.login_security.domain.agent.AgentTask">
-        select ID, USER_ID, AGENT_ID, STATUS, PURPOSE, STARTED_AT, EXPIRED_AT from AGENT_TASK where AGENT_ID = #{agent_id}
+        select ID, USER_ID, AGENT_ID, STATUS, PURPOSE, CREATED_AT, EXPIRED_AT from AGENT_TASK where AGENT_ID = #{agent_id}
     </select>
 
-    <insert id="insert" parameterType="com.banban.login_security.domain.agent.AgentTask">
-        INSERT INTO AGENT_TASK (user_id, agent_id, status, purpose, started_at, expired_at) values (#{user_id}, #{agent_id}, #{status}, #{purpose}, #{started_at}, #{expired_at})
+    <insert id="insert" parameterType="com.banban.login_security.domain.agent.AgentTask" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO AGENT_TASK (user_id, agent_id, status, purpose, created_at, expired_at) values (#{user_id}, #{agent_id}, #{status}, #{purpose}, #{created_at}, #{expired_at})
     </insert>
+    <select id="findByUserId" resultType="com.banban.login_security.domain.agent.AgentTask">
+        select ID, USER_ID, AGENT_ID, STATUS, PURPOSE, CREATED_AT, EXPIRED_AT
+        from AGENT_TASK where USER_ID = #{user_id}
+        <if test="agent_id != null">
+            and AGENT_ID = #{agent_id}
+        </if>
+        order by ID
+    </select>
+
+    <update id="update">
+        update AGENT_TASK set PURPOSE = #{task.purpose}, EXPIRED_AT = #{task.expired_at}
+        where ID = #{task.id} and USER_ID = #{user_id}
+          and STATUS = 'RUNNING' and EXPIRED_AT > CURRENT_TIMESTAMP
+    </update>
+
+    <update id="changeStatus">
+        update AGENT_TASK set STATUS = #{status}
+        where ID = #{id} and USER_ID = #{user_id}
+          and STATUS = 'RUNNING' and EXPIRED_AT > CURRENT_TIMESTAMP
+    </update>
+
+    <delete id="delete">
+        delete from AGENT_TASK where ID = #{id} and USER_ID = #{user_id}
+    </delete>
 </mapper>
