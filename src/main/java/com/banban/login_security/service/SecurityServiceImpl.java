@@ -104,6 +104,7 @@ public class SecurityServiceImpl implements SecurityService{
     }
 
     public Claims validateToken(String token) {
+
         try{
             return jwtTokenProvider.parseClaims(token);
         } catch (ExpiredJwtException e) {

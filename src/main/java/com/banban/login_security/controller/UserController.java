@@ -57,7 +57,7 @@ public class UserController {
     @PostMapping(value = "/auth")
     public ResponseEntity<Response> authForJson(HttpServletRequest request){
         String token = CommonFunction.getCookie(request, "refreshToken");
-        if(token == null){
+        if(token == null || token.isEmpty()){
             throw new CustomException(SecurityErrorCode.NOT_COOKIE, "쿠키가 존재하지 않습니다.");
         }
 

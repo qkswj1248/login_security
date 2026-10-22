@@ -90,6 +90,7 @@ class JwtLoginIntegrationTests {
                 .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(testSecret)), SignatureAlgorithm.HS256).compact();
     }
 
+    // 등록된 비밀번호
     @Test
     void passwordIsHashedAndDuplicateSignupIsRejected() throws Exception {
         String stored = jdbc.queryForObject("select PASSWORD from USER_INFO where ID = ?", String.class, userId);
